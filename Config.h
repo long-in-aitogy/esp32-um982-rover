@@ -18,6 +18,11 @@
 #define TOPIC_PUB_DATA "tdm2402/um980/data" 
 #define TOPIC_SUB_CMD  "tdm2402/um980/cmd"  
 #define TOPIC_PUB_HEALTH "tdm2402/um980/health" // Thêm topic gửi trạng thái sức khỏe
+#define TOPIC_PUB_SENSOR "tdm2402/sensor/data"  // Topic gửi dữ liệu Bluetooth sensor
+
+// ================= CẤU HÌNH BLUETOOTH SENSOR =================
+#define SENSOR_MAC_ADDRESS "44:1D:64:EC:14:AA"
+
 
 // ================= CẤU HÌNH NTRIP =================
 // 1 = PUSH BASE, 2 = PULL NO NMEA, 3 = PULL WITH NMEA

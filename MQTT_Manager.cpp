@@ -71,6 +71,14 @@ void publishHealth(String payload) {
   }
 }
 
+void publishSensorData(String payload) {
+  if (mqtt.connected() && payload.length() > 0) {
+    Serial.print("[MQTT SENSOR] ");
+    Serial.println(payload);
+    mqtt.publish(TOPIC_PUB_SENSOR, payload.c_str());
+  }
+}
+
 bool isMqttConnected() {
   return mqtt.connected();
 }
