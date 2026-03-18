@@ -15,11 +15,12 @@
 #define MQTT_USER "mqttUser"
 #define MQTT_PASS "MqttPassword123$%^"
 
-#define TOPIC_PUB_DATA "tdm2402/um980/data"
+#define TOPIC_PUB_DATA_GGA "tdm2402/um980/data/gga"
+#define TOPIC_PUB_DATA_KSXT "tdm2402/um980/data/ksxt"
 #define TOPIC_SUB_CMD "tdm2402/um980/cmd"
-#define TOPIC_PUB_RAW "tdm2402/um980/rawdata"
-#define TOPIC_PUB_HEALTH                                                       \
-  "tdm2402/um980/health" // Thêm topic gửi trạng thái sức khỏe
+#define TOPIC_PUB_RAW_GGA "tdm2402/um980/raw/gga"
+#define TOPIC_PUB_RAW_KSXT "tdm2402/um980/raw/ksxt"
+#define TOPIC_PUB_HEALTH "tdm2402/um980/health"
 
 // ================= CẤU HÌNH NTRIP =================
 // 1 = PUSH BASE, 2 = PULL NO NMEA, 3 = PULL WITH NMEA

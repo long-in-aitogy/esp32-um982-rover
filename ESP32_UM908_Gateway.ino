@@ -3,9 +3,13 @@
 #include "MQTT_Manager.h"
 #include "NTRIP_Handler.h"
 #include "NMEA_Parser.h"
+#include "DataStructs.h"
 
 String nmeaBuffer = "";
 String latestGGA = ""; // Lưu GGA gốc mới nhất cho NTRIP
+
+gga_data_struct ggaData;
+ksxt_data_struct ksxtData;
 
 unsigned long lastHealthCheck = 0;
 const unsigned long HEALTH_INTERVAL = 30000; // Gửi báo cáo sức khỏe mỗi 30 giây (30000 ms)
@@ -67,29 +71,36 @@ void loop() {
   while (Serial1.available()) {
     char c = Serial1.read();
     nmeaBuffer += c;
-    if (c == '\n' || c == 0) {
-      Serial.print("[UM982 GNSS INPUT DEBUG]"); // debug only
-      Serial.println(nmeaBuffer);
-    }
 
     if (c == '\n') {
       nmeaBuffer.trim(); 
       
       // Bắt dòng tọa độ
-      if (nmeaBuffer.startsWith("$GNGGA") || nmeaBuffer.startsWith("$GPGGA")) {
+      if (nmeaBuffer.startsWith("$GNGGA") || nmeaBuffer.startsWith("$GPGGA") || nmeaBuffer.startsWith("$KSXT")) {
         // Cập nhật tọa độ mới nhất để NTRIP dùng xác thực (Mode 3)
         latestGGA = nmeaBuffer; 
-
-        // Đẩy dữ liệu chưa xử lý lên MQTT
-        publishRaw(nmeaBuffer);
-        
-        // Giải mã thành JSON
-        String jsonPayload = parseGGA_toJSON(nmeaBuffer);
         
         // Đẩy lên MQTT
-        publishData(jsonPayload);
+        if (nmeaBuffer.startsWith("$KSXT")) {
+          publishRaw(nmeaBuffer, false);
+          // Giải mã thành JSON
+          String jsonPayload = parseKSXT_toJSON(nmeaBuffer);
+          publishData(jsonPayload, false);
+        }
+        else {
+          publishRaw(nmeaBuffer, true);
+          bool parseOk = parseGGA_toStruct(nmeaBuffer, ggaData);
+          String jsonPayload = "";
+          if (parseOk) {
+            jsonPayload = parseGGA_toJSON(ggaData);
+          }
+          publishData(jsonPayload, false);
+        }
       } 
       // Bắt dòng phản hồi lệnh
+      else if (nmeaBuffer.startsWith("$KSXT")) {
+
+      }
       else if (nmeaBuffer.startsWith("#")) {
         Serial.print("[UM980 RESPONSE] ");
         Serial.println(nmeaBuffer);

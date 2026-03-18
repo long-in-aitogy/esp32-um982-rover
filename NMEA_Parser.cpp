@@ -11,7 +11,16 @@ double nmeaToDecimal(String nmeaPos, String dir) {
   return decimal;
 }
 
-String parseGGA_toJSON(String ggaMsg) {
+String parseGGA_toJSON(gga_data_struct ggaData) {
+  char jsonPayload[128];
+  snprintf(jsonPayload, sizeof(jsonPayload), 
+            "{\"lat\":%.7f,\"lon\":%.7f,\"rtk_status\":%s,\"satellites\":%s}", 
+            ggaData.lat, ggaData.lon, ggaData.rtk_status.c_str(), ggaData.satellites.c_str());
+            
+  return String(jsonPayload);
+}
+
+boolean parseGGA_toStruct(String ggaMsg, gga_data_struct &ggaData) {
   int comma[15];
   int count = 0;
   for (int i = 0; i < ggaMsg.length(); i++) {
@@ -33,13 +42,38 @@ String parseGGA_toJSON(String ggaMsg) {
       double latDD = nmeaToDecimal(latStr, latDir);
       double lonDD = nmeaToDecimal(lonStr, lonDir);
       
-      char jsonPayload[128];
-      snprintf(jsonPayload, sizeof(jsonPayload), 
-               "{\"lat\":%.7f,\"lon\":%.7f,\"rtk_status\":%s,\"satellites\":%s}", 
-               latDD, lonDD, rtkStr.c_str(), satStr.c_str());
+      ggaData.lat = latDD;
+      ggaData.lon = lonDD;
+      ggaData.rtk_status = rtkStr;
+      ggaData.satellites = satStr;
                
-      return String(jsonPayload);
+      return true;
     }
+  }
+  return false;
+}
+
+String parseKSXT_toJSON(String ksxtMsg) {
+  int comma[23];
+  int count = 0;
+  for (int i = 0; i < ksxtMsg.length(); i++) {
+    if (ksxtMsg[i] == ',') {
+      comma[count++] = i;
+      if (count >= 23) break;
+    }
+  }
+
+  if (count >= 22) {
+    String heightStr = ksxtMsg.substring(comma[4] + 1, comma[5]);
+    String headingStr = ksxtMsg.substring(comma[5] + 1, comma[6]);
+    String pitchStr = ksxtMsg.substring(comma[6] + 1, comma[7]);
+    String rollStr = ksxtMsg.substring(comma[7] + 1, comma[8]);
+    String veloStr = ksxtMsg.substring(comma[8] + 1, comma[9]);
+    char jsonPayload[192];
+    snprintf(jsonPayload, sizeof(jsonPayload), 
+             "{\"height_m\":%s,\"heading_deg\":%s,\"pitch_deg\":%s,\"roll_deg\":%s,\"velocity_kmh\":%s}", 
+             heightStr.c_str(), headingStr.c_str(), pitchStr.c_str(), rollStr.c_str(), veloStr.c_str());
+    return String(jsonPayload);
   }
   return ""; // Trả về rỗng nếu không parse được
 }
