@@ -9,8 +9,8 @@ void setupWiFi();
 void setupMQTT();
 void loopMQTT();
 void publishData(String payload);
+void publishRaw(String payload);
 void publishHealth(String payload); // Thêm hàm gửi thông tin sức khỏe
-void publishSensorData(String payload); // Hàm gửi dữ liệu từ cảm biến BT
 bool isMqttConnected();             // Thêm hàm lấy trạng thái kết nối MQTT
 
 #endif

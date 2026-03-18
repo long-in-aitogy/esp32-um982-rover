@@ -63,19 +63,19 @@ void publishData(String payload) {
   }
 }
 
+void publishRaw(String payload) {
+  if (mqtt.connected() && payload.length() > 0) {
+    Serial.print("[UM982 GNSS RAW DATA]"); // debug only
+    Serial.println(payload);
+    mqtt.publish(TOPIC_PUB_RAW, payload.c_str());
+  }
+}
+
 void publishHealth(String payload) {
   if (mqtt.connected() && payload.length() > 0) {
     Serial.print("[MQTT HEALTH] ");
     Serial.println(payload);
     mqtt.publish(TOPIC_PUB_HEALTH, payload.c_str());
-  }
-}
-
-void publishSensorData(String payload) {
-  if (mqtt.connected() && payload.length() > 0) {
-    Serial.print("[MQTT SENSOR] ");
-    Serial.println(payload);
-    mqtt.publish(TOPIC_PUB_SENSOR, payload.c_str());
   }
 }
 

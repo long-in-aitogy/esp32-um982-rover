@@ -3,7 +3,6 @@
 #include "MQTT_Manager.h"
 #include "NTRIP_Handler.h"
 #include "NMEA_Parser.h"
-#include "BT_Sensor_Manager.h" // Thêm thư viện Bluetooth
 
 String nmeaBuffer = "";
 String latestGGA = ""; // Lưu GGA gốc mới nhất cho NTRIP
@@ -19,17 +18,15 @@ void sendDeviceHealth() {
   bool mqttOk = isMqttConnected();
   bool ntripOk = isNtripConnected();
   bool gnssOk = (latestGGA.length() > 10); // Nếu có chuỗi NMEA hợp lệ
-  bool btOk = isBTSensorConnected(); // Lấy trạng thái Bluetooth
   
   // 2. Đóng gói thành JSON
-  char healthPayload[300];
+  char healthPayload[256];
   snprintf(healthPayload, sizeof(healthPayload), 
-           "{\"uptime_s\":%lu,\"free_heap_bytes\":%u,\"wifi_rssi_dbm\":%d,\"mqtt_ok\":%s,\"ntrip_ok\":%s,\"gnss_data_ok\":%s,\"bt_sensor_ok\":%s}", 
+           "{\"uptime_s\":%lu,\"free_heap_bytes\":%u,\"wifi_rssi_dbm\":%d,\"mqtt_ok\":%s,\"ntrip_ok\":%s,\"gnss_data_ok\":%s}", 
            uptime_s, freeHeap, rssi, 
            mqttOk ? "true" : "false", 
            ntripOk ? "true" : "false",
-           gnssOk ? "true" : "false",
-           btOk ? "true" : "false");
+           gnssOk ? "true" : "false");
            
   // 3. Gửi lên Topic theo dõi
   publishHealth(String(healthPayload));
@@ -49,7 +46,6 @@ void setup() {
   setupWiFi();
   setupMQTT();
   setupNTRIP();
-  setupBTSensor(); // Khởi động Bluetooth Master và Task nhận data
   
   Serial.println("=========================================");
   Serial.println("        KHOI DONG HOAN TAT               ");
@@ -71,6 +67,10 @@ void loop() {
   while (Serial1.available()) {
     char c = Serial1.read();
     nmeaBuffer += c;
+    if (c == '\n' || c == 0) {
+      Serial.print("[UM982 GNSS INPUT DEBUG]"); // debug only
+      Serial.println(nmeaBuffer);
+    }
 
     if (c == '\n') {
       nmeaBuffer.trim(); 
@@ -79,6 +79,9 @@ void loop() {
       if (nmeaBuffer.startsWith("$GNGGA") || nmeaBuffer.startsWith("$GPGGA")) {
         // Cập nhật tọa độ mới nhất để NTRIP dùng xác thực (Mode 3)
         latestGGA = nmeaBuffer; 
+
+        // Đẩy dữ liệu chưa xử lý lên MQTT
+        publishRaw(nmeaBuffer);
         
         // Giải mã thành JSON
         String jsonPayload = parseGGA_toJSON(nmeaBuffer);
