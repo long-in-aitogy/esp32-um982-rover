@@ -11,7 +11,7 @@ double nmeaToDecimal(String nmeaPos, String dir);
 String parseGGA_toJSON(gga_data_struct ggaData);
 boolean parseGGA_toStruct(String ggaMsg, gga_data_struct &ggaData);
 
-String parseKSXT_toJSON(String ksxtMsg);
+String parseKSXT_toJSON(ksxt_data_struct ksxtData);
 boolean parseKSXT_toStruct(String ksxtMsg, ksxt_data_struct &ksxtData);
 
 #endif

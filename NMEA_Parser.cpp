@@ -53,7 +53,15 @@ boolean parseGGA_toStruct(String ggaMsg, gga_data_struct &ggaData) {
   return false;
 }
 
-String parseKSXT_toJSON(String ksxtMsg) {
+String parseKSXT_toJSON(ksxt_data_struct ksxtData) {
+  char jsonPayload[192];
+  snprintf(jsonPayload, sizeof(jsonPayload), 
+           "{\"height_m\":%.2f,\"heading_deg\":%.2f,\"pitch_deg\":%.2f,\"roll_deg\":%.2f,\"velocity_kmh\":%.2f}", 
+           ksxtData.height_m, ksxtData.heading_deg, ksxtData.pitch_deg, ksxtData.roll_deg, ksxtData.velocity_kmh);
+  return String(jsonPayload);
+}
+
+boolean parseKSXT_toStruct(String ksxtMsg, ksxt_data_struct &ksxtData) {
   int comma[23];
   int count = 0;
   for (int i = 0; i < ksxtMsg.length(); i++) {
@@ -63,17 +71,29 @@ String parseKSXT_toJSON(String ksxtMsg) {
     }
   }
 
-  if (count >= 22) {
+  if (count >= 14) {
     String heightStr = ksxtMsg.substring(comma[4] + 1, comma[5]);
     String headingStr = ksxtMsg.substring(comma[5] + 1, comma[6]);
     String pitchStr = ksxtMsg.substring(comma[6] + 1, comma[7]);
     String rollStr = ksxtMsg.substring(comma[7] + 1, comma[8]);
     String veloStr = ksxtMsg.substring(comma[8] + 1, comma[9]);
-    char jsonPayload[192];
-    snprintf(jsonPayload, sizeof(jsonPayload), 
-             "{\"height_m\":%s,\"heading_deg\":%s,\"pitch_deg\":%s,\"roll_deg\":%s,\"velocity_kmh\":%s}", 
-             heightStr.c_str(), headingStr.c_str(), pitchStr.c_str(), rollStr.c_str(), veloStr.c_str());
-    return String(jsonPayload);
+
+    if (heightStr.length() > 0 && headingStr.length() > 0
+        && pitchStr.length() > 0 && rollStr.length() > 0 && veloStr.length() > 0) {
+      double heightDD = heightStr.toDouble();
+      double headingDD = headingStr.toDouble();
+      double pitchDD = pitchStr.toDouble();
+      double rollDD = rollStr.toDouble();
+      double veloDD = veloStr.toDouble();
+
+      ksxtData.height_m = heightDD;
+      ksxtData.heading_deg = headingDD;
+      ksxtData.pitch_deg = pitchDD;
+      ksxtData.roll_deg = rollDD;
+      ksxtData.velocity_kmh = veloDD;
+
+      return true;
+    }
   }
-  return ""; // Trả về rỗng nếu không parse được
+  return false;
 }

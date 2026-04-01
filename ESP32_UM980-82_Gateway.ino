@@ -83,8 +83,11 @@ void loop() {
         // Đẩy lên MQTT
         if (nmeaBuffer.startsWith("$KSXT")) {
           publishRaw(nmeaBuffer, false);
-          // Giải mã thành JSON
-          String jsonPayload = parseKSXT_toJSON(nmeaBuffer);
+          bool parseOk = parseKSXT_toStruct(nmeaBuffer, ksxtData);
+          String jsonPayload = "";
+          if (parseOk) {
+            jsonPayload = parseKSXT_toJSON(ksxtData);
+          }
           publishData(jsonPayload, false);
         }
         else {
