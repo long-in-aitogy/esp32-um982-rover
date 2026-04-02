@@ -8,7 +8,8 @@
 void setupWiFi();
 void setupMQTT();
 void loopMQTT();
-void publishData(String payload);
+void publishData(String payload, bool isGGA);
+void publishRaw(String payload, bool isGGA);
 void publishHealth(String payload); // Thêm hàm gửi thông tin sức khỏe
 bool isMqttConnected();             // Thêm hàm lấy trạng thái kết nối MQTT
 

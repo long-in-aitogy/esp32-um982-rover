@@ -3,9 +3,17 @@
 #include "MQTT_Manager.h"
 #include "NTRIP_Handler.h"
 #include "NMEA_Parser.h"
+#include "DataStructs.h"
 
 String nmeaBuffer = "";
 String latestGGA = ""; // Lưu GGA gốc mới nhất cho NTRIP
+
+// Toạ độ của mục tiêu, tạm thời để giá trị mẫu
+String targetGGA = "$GNGGA,045151.00,2104.44183385,N,10546.62503715,E,1,28,0.7,22.4381,M,-28.2448,M,,*6C";
+
+gga_data_struct ggaData;
+gga_data_struct targetGgaData;
+ksxt_data_struct ksxtData;
 
 unsigned long lastHealthCheck = 0;
 const unsigned long HEALTH_INTERVAL = 30000; // Gửi báo cáo sức khỏe mỗi 30 giây (30000 ms)
@@ -72,17 +80,34 @@ void loop() {
       nmeaBuffer.trim(); 
       
       // Bắt dòng tọa độ
-      if (nmeaBuffer.startsWith("$GNGGA") || nmeaBuffer.startsWith("$GPGGA")) {
+      if (nmeaBuffer.startsWith("$GNGGA") || nmeaBuffer.startsWith("$GPGGA") || nmeaBuffer.startsWith("$KSXT")) {
         // Cập nhật tọa độ mới nhất để NTRIP dùng xác thực (Mode 3)
         latestGGA = nmeaBuffer; 
         
-        // Giải mã thành JSON
-        String jsonPayload = parseGGA_toJSON(nmeaBuffer);
-        
         // Đẩy lên MQTT
-        publishData(jsonPayload);
+        if (nmeaBuffer.startsWith("$KSXT")) {
+          publishRaw(nmeaBuffer, false);
+          bool parseOk = parseKSXT_toStruct(nmeaBuffer, ksxtData);
+          String jsonPayload = "";
+          if (parseOk) {
+            jsonPayload = parseKSXT_toJSON(ksxtData);
+          }
+          publishData(jsonPayload, false);
+        }
+        else {
+          publishRaw(nmeaBuffer, true);
+          bool parseOk = parseGGA_toStruct(nmeaBuffer, ggaData);
+          String jsonPayload = "";
+          if (parseOk) {
+            jsonPayload = parseGGA_toJSON(ggaData);
+          }
+          publishData(jsonPayload, false);
+        }
       } 
       // Bắt dòng phản hồi lệnh
+      else if (nmeaBuffer.startsWith("$KSXT")) {
+
+      }
       else if (nmeaBuffer.startsWith("#")) {
         Serial.print("[UM980 RESPONSE] ");
         Serial.println(nmeaBuffer);

@@ -55,11 +55,26 @@ void loopMQTT() {
   mqtt.loop();
 }
 
-void publishData(String payload) {
+void publishData(String payload, bool isGGA) {
   if (mqtt.connected() && payload.length() > 0) {
     Serial.print("[MQTT UPLINK] ");
     Serial.println(payload);
-    mqtt.publish(TOPIC_PUB_DATA, payload.c_str());
+    if (isGGA)
+      mqtt.publish(TOPIC_PUB_DATA_GGA, payload.c_str());
+    else
+      mqtt.publish(TOPIC_PUB_DATA_KSXT, payload.c_str());
+  }
+}
+
+void publishRaw(String payload, bool isGGA) {
+  if (mqtt.connected() && payload.length() > 0) {
+    Serial.print("[UM982 GNSS RAW DATA] ");
+    Serial.println(payload);
+    if (isGGA) {
+      mqtt.publish(TOPIC_PUB_RAW_GGA, payload.c_str());
+    } else {
+      mqtt.publish(TOPIC_PUB_RAW_KSXT, payload.c_str());
+    }
   }
 }
 
