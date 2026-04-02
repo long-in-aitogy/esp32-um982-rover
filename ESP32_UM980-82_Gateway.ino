@@ -8,7 +8,11 @@
 String nmeaBuffer = "";
 String latestGGA = ""; // Lưu GGA gốc mới nhất cho NTRIP
 
+// Toạ độ của mục tiêu, tạm thời để giá trị mẫu
+String targetGGA = "$GNGGA,045151.00,2104.44183385,N,10546.62503715,E,1,28,0.7,22.4381,M,-28.2448,M,,*6C";
+
 gga_data_struct ggaData;
+gga_data_struct targetGgaData;
 ksxt_data_struct ksxtData;
 
 unsigned long lastHealthCheck = 0;
