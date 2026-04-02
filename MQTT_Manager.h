@@ -2,8 +2,15 @@
 #define MQTT_MANAGER_H
 
 #include <Arduino.h>
-#include <WiFi.h>
 #include <PubSubClient.h>
+
+#define CONNECT_USING_WIFI true
+
+#if CONNECT_USING_WIFI
+#include "wifi_handler.h"
+#else
+#include "Sim_handler.h"
+#endif
 
 void setupWiFi();
 void setupMQTT();
