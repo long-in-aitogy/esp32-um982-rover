@@ -6,6 +6,7 @@ WiFiClient espClient;
 #else
 TinyGsmClient espClient(modem);
 #endif
+
 PubSubClient mqtt(espClient);
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {

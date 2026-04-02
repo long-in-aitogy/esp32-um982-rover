@@ -9,7 +9,7 @@
 #define SerialAT Serial2
 
 // See all AT commands
-#define DUMP_AT_COMMANDS
+// #define DUMP_AT_COMMANDS
 #define TINY_GSM_DEBUG SerialMon
 
 // pins
@@ -24,7 +24,7 @@
 StreamDebugger debugger(SerialAT, SerialMon);
 TinyGsm        modem(debugger);
 #else
-TinyGsm        modem(SerialAT);
+TinyGsm        modem(Serial);
 #endif
 
 const char apn[]      = "v-internet";  // Thay bằng APN của nhà mạng bạn
