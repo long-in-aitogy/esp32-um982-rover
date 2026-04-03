@@ -4,15 +4,8 @@
 #include <Arduino.h>
 #include <PubSubClient.h>
 
-#define CONNECT_USING_WIFI true
+#define CONNECT_USING_WIFI false
 
-#if CONNECT_USING_WIFI
-#include "wifi_handler.h"
-#else
-#include "Sim_handler.h"
-#endif
-
-void setupWiFi();
 void setupMQTT();
 void loopMQTT();
 void publishData(String payload, bool isGGA);

@@ -4,6 +4,8 @@
 #include "NTRIP_Handler.h"
 #include "NMEA_Parser.h"
 #include "DataStructs.h"
+#include "Sim_handler.h"
+#include "Wifi_handler.h"
 
 String nmeaBuffer = "";
 String latestGGA = ""; // Lưu GGA gốc mới nhất cho NTRIP
@@ -50,8 +52,14 @@ void setup() {
 
   // Khởi tạo giao tiếp với UM980
   Serial1.begin(GNSS_BAUD, SERIAL_8N1, RX_GNSS, TX_GNSS);
+  if (CONNECT_USING_WIFI) {
+    Serial.println("[SETUP] Su dung ket noi WIFI");
+    setupWiFi();
+  } else {
+    Serial.println("[SETUP] Su dung ket noi SIM/GSM");
+    setupGSM();
+  }
   
-  setupWiFi();
   setupMQTT();
   setupNTRIP();
   

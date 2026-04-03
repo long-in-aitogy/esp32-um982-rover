@@ -2,8 +2,10 @@
 #include "Config.h"
 
 #if CONNECT_USING_WIFI
+#include "wifi_handler.h"
 WiFiClient espClient;
 #else
+#include "Sim_handler.h"
 TinyGsmClient espClient(modem);
 #endif
 
