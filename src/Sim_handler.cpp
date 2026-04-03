@@ -1,6 +1,6 @@
 #include "Sim_handler.h"
 
-void setupGSM() {
+void setupGSM(TinyGsm &modem) {
     int retrys = 1;
     SerialMon.println("Initializing modem... Attempt: " + String(retrys));
     modem.restart();
