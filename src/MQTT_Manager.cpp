@@ -1,7 +1,14 @@
 #include "MQTT_Manager.h"
 #include "Config.h"
 
+#if CONNECT_USING_WIFI
+#include "wifi_handler.h"
 WiFiClient espClient;
+#else
+#include "Sim_handler.h"
+TinyGsmClient espClient(modem);
+#endif
+
 PubSubClient mqtt(espClient);
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -14,23 +21,6 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   // Đẩy lệnh xuống UM980 qua Serial1
   Serial1.print(cmd);
   Serial1.print("\r\n");
-}
-
-void setupWiFi() {
-  Serial.print("\n[WIFI] Dang ket noi mang: ");
-  Serial.println(WIFI_SSID);
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
-  
-  int attempt = 0;
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-    if (++attempt > 30) {
-      Serial.println("\n[ERROR] Ket noi WiFi that bai!");
-      attempt = 0;
-    }
-  }
-  Serial.println("\n[WIFI] Ket noi THANH CONG! IP: " + WiFi.localIP().toString());
 }
 
 void setupMQTT() {

@@ -2,10 +2,10 @@
 #define MQTT_MANAGER_H
 
 #include <Arduino.h>
-#include <WiFi.h>
 #include <PubSubClient.h>
 
-void setupWiFi();
+#define CONNECT_USING_WIFI false
+
 void setupMQTT();
 void loopMQTT();
 void publishData(String payload, bool isGGA);
