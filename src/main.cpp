@@ -7,6 +7,23 @@
 #include "Sim_handler.h"
 #include "Wifi_handler.h"
 
+#if CONNECT_USING_WIFI
+#include "wifi_handler.h"
+WiFiClient espClient;
+#else
+#include "Sim_handler.h"
+#ifdef DUMP_AT_COMMANDS
+#include <StreamDebugger.h>
+StreamDebugger debugger(SerialAT, SerialMon);
+TinyGsm        modem(debugger);
+#else
+TinyGsm        modem(Serial);
+#endif
+TinyGsmClient espClient(modem);
+#endif
+
+PubSubClient mqtt(espClient);
+
 String nmeaBuffer = "";
 String latestGGA = ""; // Lưu GGA gốc mới nhất cho NTRIP
 
@@ -25,7 +42,7 @@ void sendDeviceHealth() {
   unsigned long uptime_s = millis() / 1000;
   uint32_t freeHeap = ESP.getFreeHeap();
   int32_t rssi = WiFi.RSSI();
-  bool mqttOk = isMqttConnected();
+  bool mqttOk = isMqttConnected(mqtt);
   bool ntripOk = isNtripConnected();
   bool gnssOk = (latestGGA.length() > 10); // Nếu có chuỗi NMEA hợp lệ
   
@@ -39,7 +56,7 @@ void sendDeviceHealth() {
            gnssOk ? "true" : "false");
            
   // 3. Gửi lên Topic theo dõi
-  publishHealth(String(healthPayload));
+  publishHealth(mqtt, String(healthPayload));
 }
 
 void setup() {
@@ -57,10 +74,10 @@ void setup() {
     setupWiFi();
   } else {
     Serial.println("[SETUP] Su dung ket noi SIM/GSM");
-    setupGSM();
+    setupGSM(modem);
   }
   
-  setupMQTT();
+  setupMQTT(mqtt);
   setupNTRIP();
   
   Serial.println("=========================================");
@@ -70,7 +87,7 @@ void setup() {
 
 void loop() {
   // 1. Duy trì kết nối mạng
-  loopMQTT();
+  loopMQTT(mqtt);
   loopNTRIP(latestGGA);
 
   // === KIỂM TRA VÀ GỬI THÔNG TIN SỨC KHỎE ===
@@ -94,22 +111,22 @@ void loop() {
         
         // Đẩy lên MQTT
         if (nmeaBuffer.startsWith("$KSXT")) {
-          publishRaw(nmeaBuffer, false);
+          publishRaw(mqtt, nmeaBuffer, false);
           bool parseOk = parseKSXT_toStruct(nmeaBuffer, ksxtData);
           String jsonPayload = "";
           if (parseOk) {
             jsonPayload = parseKSXT_toJSON(ksxtData);
           }
-          publishData(jsonPayload, false);
+          publishData(mqtt, jsonPayload, false);
         }
         else {
-          publishRaw(nmeaBuffer, true);
+          publishRaw(mqtt, nmeaBuffer, true);
           bool parseOk = parseGGA_toStruct(nmeaBuffer, ggaData);
           String jsonPayload = "";
           if (parseOk) {
             jsonPayload = parseGGA_toJSON(ggaData);
           }
-          publishData(jsonPayload, false);
+          publishData(mqtt, jsonPayload, false);
         }
       } 
       // Bắt dòng phản hồi lệnh

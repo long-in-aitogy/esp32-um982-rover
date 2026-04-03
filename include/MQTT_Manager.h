@@ -6,11 +6,11 @@
 
 #define CONNECT_USING_WIFI false
 
-void setupMQTT();
-void loopMQTT();
-void publishData(String payload, bool isGGA);
-void publishRaw(String payload, bool isGGA);
-void publishHealth(String payload); // Thêm hàm gửi thông tin sức khỏe
-bool isMqttConnected();             // Thêm hàm lấy trạng thái kết nối MQTT
+void setupMQTT(PubSubClient &mqttClient);
+void loopMQTT(PubSubClient &mqttClient);
+void publishData(PubSubClient &mqttClient, String payload, bool isGGA);
+void publishRaw(PubSubClient &mqttClient, String payload, bool isGGA);
+void publishHealth(PubSubClient &mqttClient, String payload); // Thêm hàm gửi thông tin sức khỏe
+bool isMqttConnected(PubSubClient &mqttClient);             // Thêm hàm lấy trạng thái kết nối MQTT
 
 #endif

@@ -19,18 +19,10 @@
 
 #include <TinyGsmClient.h>
 
-#ifdef DUMP_AT_COMMANDS
-#include <StreamDebugger.h>
-StreamDebugger debugger(SerialAT, SerialMon);
-TinyGsm        modem(debugger);
-#else
-TinyGsm        modem(Serial);
-#endif
-
 const char apn[]      = "v-internet";  // Thay bằng APN của nhà mạng bạn
 const char gprsUser[] = "";
 const char gprsPass[] = "";
 
-void setupGSM();
+void setupGSM(TinyGsm &modem);
 
 #endif

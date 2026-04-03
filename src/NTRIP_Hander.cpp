@@ -15,7 +15,7 @@ bool isNtripConnected() {
   return isIcyOk; // Trả về true nếu đã xác thực thành công với Caster
 }
 
-void connectNTRIP() {
+void connectNTRIP(WiFiClient &ntripClient) {
   Serial.print("\n[NTRIP] Dang mo TCP den: ");
   Serial.println(NTRIP_CASTER_IP);
 
@@ -63,7 +63,7 @@ void loopNTRIP(String currentGGA) {
   if (!ntripClient.connected()) {
     isIcyOk = false;
     if (millis() - lastReconnect > 7000) { // Thử lại sau 7 giây
-      connectNTRIP();
+      connectNTRIP(ntripClient);
       lastReconnect = millis();
     }
     return;
