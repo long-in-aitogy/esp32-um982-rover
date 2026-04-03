@@ -1,5 +1,4 @@
 #include "MQTT_Manager.h"
-#include "Config.h"
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
   String cmd = "";

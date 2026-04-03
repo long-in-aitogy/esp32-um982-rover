@@ -2,10 +2,18 @@
 #define NTRIP_HANDLER_H
 
 #include <Arduino.h>
-#include <WiFiClient.h>
+#include "Config.h"
 
-void setupNTRIP(Client &ntripClient);
-void loopNTRIP(Client &ntripClient, String currentGGA);
+#if CONNECT_USING_WIFI
+#include <WiFiClient.h>
+typedef WiFiClient ClientType;
+#else
+#include <TinyGsmClient.h>
+typedef TinyGsmClient ClientType;
+#endif
+
+void setupNTRIP();
+void loopNTRIP(ClientType &ntripClient, String currentGGA);
 bool isNtripConnected(); // Thêm hàm lấy trạng thái NTRIP
 
 #endif

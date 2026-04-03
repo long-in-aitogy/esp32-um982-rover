@@ -1,6 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define CONNECT_USING_WIFI false
+#define TINY_GSM_MODEM_SIM7600
+
 // ================= CẤU HÌNH PHẦN CỨNG =================
 #define RX_GNSS 26 // Nối TXD (Hàng dưới) của UM980
 #define TX_GNSS 27 // Nối RXD (Hàng dưới) của UM980

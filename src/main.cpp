@@ -80,7 +80,7 @@ void setup() {
   }
   
   setupMQTT(mqtt);
-  setupNTRIP(ntripClient);
+  setupNTRIP();
   
   Serial.println("=========================================");
   Serial.println("        KHOI DONG HOAN TAT               ");

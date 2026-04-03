@@ -3,8 +3,7 @@
 
 #include <Arduino.h>
 #include <PubSubClient.h>
-
-#define CONNECT_USING_WIFI false
+#include "Config.h"
 
 void setupMQTT(PubSubClient &mqttClient);
 void loopMQTT(PubSubClient &mqttClient);

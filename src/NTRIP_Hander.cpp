@@ -1,5 +1,4 @@
 #include "NTRIP_Handler.h"
-#include "Config.h"
 
 bool isIcyOk = false;
 unsigned long lastReconnect = 0;
@@ -14,7 +13,7 @@ bool isNtripConnected() {
   return isIcyOk; // Trả về true nếu đã xác thực thành công với Caster
 }
 
-void connectNTRIP(Client &ntripClient) {
+void connectNTRIP(ClientType &ntripClient) {
   Serial.print("\n[NTRIP] Dang mo TCP den: ");
   Serial.println(NTRIP_CASTER_IP);
 
@@ -57,7 +56,7 @@ void connectNTRIP(Client &ntripClient) {
   }
 }
 
-void loopNTRIP(Client &ntripClient, String currentGGA) {
+void loopNTRIP(ClientType &ntripClient, String currentGGA) {
   // 1. Quản lý mất kết nối
   if (!ntripClient.connected()) {
     isIcyOk = false;
