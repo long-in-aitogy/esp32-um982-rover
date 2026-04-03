@@ -10,6 +10,7 @@
 #if CONNECT_USING_WIFI
 #include "wifi_handler.h"
 WiFiClient espClient;
+WiFiClient ntripClient;
 #else
 #include "Sim_handler.h"
 #ifdef DUMP_AT_COMMANDS
@@ -20,6 +21,7 @@ TinyGsm        modem(debugger);
 TinyGsm        modem(Serial);
 #endif
 TinyGsmClient espClient(modem);
+TinyGsmClient ntripClient(modem);
 #endif
 
 PubSubClient mqtt(espClient);
@@ -78,7 +80,7 @@ void setup() {
   }
   
   setupMQTT(mqtt);
-  setupNTRIP();
+  setupNTRIP(ntripClient);
   
   Serial.println("=========================================");
   Serial.println("        KHOI DONG HOAN TAT               ");
@@ -88,7 +90,7 @@ void setup() {
 void loop() {
   // 1. Duy trì kết nối mạng
   loopMQTT(mqtt);
-  loopNTRIP(latestGGA);
+  loopNTRIP(ntripClient, latestGGA);
 
   // === KIỂM TRA VÀ GỬI THÔNG TIN SỨC KHỎE ===
   if (millis() - lastHealthCheck >= HEALTH_INTERVAL) {

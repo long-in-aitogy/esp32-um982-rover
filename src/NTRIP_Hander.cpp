@@ -1,7 +1,6 @@
 #include "NTRIP_Handler.h"
 #include "Config.h"
 
-WiFiClient ntripClient;
 bool isIcyOk = false;
 unsigned long lastReconnect = 0;
 bool isNmeaSent = false; // Cờ kiểm tra xem đã gửi NMEA xác thực chưa
@@ -15,7 +14,7 @@ bool isNtripConnected() {
   return isIcyOk; // Trả về true nếu đã xác thực thành công với Caster
 }
 
-void connectNTRIP(WiFiClient &ntripClient) {
+void connectNTRIP(Client &ntripClient) {
   Serial.print("\n[NTRIP] Dang mo TCP den: ");
   Serial.println(NTRIP_CASTER_IP);
 
@@ -58,7 +57,7 @@ void connectNTRIP(WiFiClient &ntripClient) {
   }
 }
 
-void loopNTRIP(String currentGGA) {
+void loopNTRIP(Client &ntripClient, String currentGGA) {
   // 1. Quản lý mất kết nối
   if (!ntripClient.connected()) {
     isIcyOk = false;

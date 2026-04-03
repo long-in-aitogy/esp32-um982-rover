@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <WiFiClient.h>
 
-void setupNTRIP();
-void loopNTRIP(String currentGGA);
+void setupNTRIP(Client &ntripClient);
+void loopNTRIP(Client &ntripClient, String currentGGA);
 bool isNtripConnected(); // Thêm hàm lấy trạng thái NTRIP
 
 #endif
