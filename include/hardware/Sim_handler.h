@@ -1,6 +1,9 @@
 #ifndef SIM_HANDLER_H
 #define SIM_HANDLER_H
 
+// xác định loại modem
+#define TINY_GSM_MODEM_SIM7600
+
 // Set serial for debug console
 #define SerialMon Serial
 
@@ -16,7 +19,6 @@
 #define MODEM_TX 16
 // #define MODEM_RESET_PIN 4
 
-#include "Config.h"
 #include <TinyGsmClient.h>
 
 const char apn[]      = "v-internet";  // Thay bằng APN của nhà mạng bạn

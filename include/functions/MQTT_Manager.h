@@ -1,9 +1,12 @@
 #ifndef MQTT_MANAGER_H
 #define MQTT_MANAGER_H
 
+// ============ GẮN CÁC THƯ VIỆN CẦN THIẾT ==============
+
 #include <Arduino.h>
 #include <PubSubClient.h>
-#include "Config.h"
+
+// ================= KHAI BÁO HÀM =================
 
 void setupMQTT(PubSubClient &mqttClient);
 void loopMQTT(PubSubClient &mqttClient);

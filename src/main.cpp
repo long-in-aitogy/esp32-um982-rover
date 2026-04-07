@@ -1,18 +1,16 @@
 #include <Arduino.h>
-#include "Config.h"
-#include "MQTT_Manager.h"
-#include "NTRIP_Handler.h"
-#include "NMEA_Parser.h"
+#include "Device_Config.h"
+#include "functions/MQTT_Manager.h"
+#include "functions/NTRIP_Handler.h"
+#include "functions/NMEA_Parser.h"
 #include "DataStructs.h"
-#include "Sim_handler.h"
-#include "Wifi_handler.h"
 
 #if CONNECT_USING_WIFI
-#include "wifi_handler.h"
+#include "hardware/Wifi_handler.h"
 WiFiClient espClient;
 WiFiClient ntripClient;
 #else
-#include "Sim_handler.h"
+#include "hardware/Sim_handler.h"
 #ifdef DUMP_AT_COMMANDS
 #include <StreamDebugger.h>
 StreamDebugger debugger(SerialAT, SerialMon);
@@ -43,7 +41,15 @@ void sendDeviceHealth() {
   // 1. Lấy các thông số hệ thống
   unsigned long uptime_s = millis() / 1000;
   uint32_t freeHeap = ESP.getFreeHeap();
-  int32_t rssi = WiFi.RSSI();
+
+  #if CONNECT_USING_WIFI
+    int32_t rssi = WiFi.RSSI();
+    String connected_via = "WiFi";
+  #else
+    int32_t rssi = modem.getSignalQuality();
+    String connected_via = "GSM";
+  #endif
+  
   bool mqttOk = isMqttConnected(mqtt);
   bool ntripOk = isNtripConnected();
   bool gnssOk = (latestGGA.length() > 10); // Nếu có chuỗi NMEA hợp lệ
@@ -51,8 +57,8 @@ void sendDeviceHealth() {
   // 2. Đóng gói thành JSON
   char healthPayload[256];
   snprintf(healthPayload, sizeof(healthPayload), 
-           "{\"uptime_s\":%lu,\"free_heap_bytes\":%u,\"wifi_rssi_dbm\":%d,\"mqtt_ok\":%s,\"ntrip_ok\":%s,\"gnss_data_ok\":%s}", 
-           uptime_s, freeHeap, rssi, 
+           "{\"uptime_s\":%lu,\"free_heap_bytes\":%u,\"connected_via\":\"%s\",\"rssi_dbm\":%d,\"mqtt_ok\":%s,\"ntrip_ok\":%s,\"gnss_data_ok\":%s}", 
+           uptime_s, freeHeap, connected_via, rssi, 
            mqttOk ? "true" : "false", 
            ntripOk ? "true" : "false",
            gnssOk ? "true" : "false");
@@ -71,13 +77,14 @@ void setup() {
 
   // Khởi tạo giao tiếp với UM980
   Serial1.begin(GNSS_BAUD, SERIAL_8N1, RX_GNSS, TX_GNSS);
-  if (CONNECT_USING_WIFI) {
+
+  #if CONNECT_USING_WIFI
     Serial.println("[SETUP] Su dung ket noi WIFI");
     setupWiFi();
-  } else {
+  #else
     Serial.println("[SETUP] Su dung ket noi SIM/GSM");
     setupGSM(modem);
-  }
+  #endif
   
   setupMQTT(mqtt);
   setupNTRIP();
