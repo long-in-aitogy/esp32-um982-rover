@@ -1,5 +1,20 @@
-#include "MQTT_Manager.h"
-#include "Config.h"
+#include "functions/MQTT_Manager.h"
+
+// ================ CẤU HÌNH MQTT =================
+
+const char* MQTT_SERVER = "aitogy.asia";
+const int MQTT_PORT = 1883;
+const char* MQTT_USER = "mqttUser";
+const char* MQTT_PASS = "MqttPassword123$%^";
+
+const char* TOPIC_PUB_DATA_GGA = "tdm2402/um980/data/gga";
+const char* TOPIC_PUB_DATA_KSXT = "tdm2402/um980/data/ksxt";
+const char* TOPIC_SUB_CMD = "tdm2402/um980/cmd";
+const char* TOPIC_PUB_RAW_GGA = "tdm2402/um980/raw/gga";
+const char* TOPIC_PUB_RAW_KSXT = "tdm2402/um980/raw/ksxt";
+const char* TOPIC_PUB_HEALTH = "tdm2402/um980/health";
+
+// ================= ĐỊNH NGHĨA HÀM =================
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
   String cmd = "";

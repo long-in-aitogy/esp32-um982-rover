@@ -1,4 +1,4 @@
-#include "NMEA_Parser.h"
+#include "functions/NMEA_Parser.h"
 
 double nmeaToDecimal(String nmeaPos, String dir) {
   if (nmeaPos.length() < 4) return 0.0;

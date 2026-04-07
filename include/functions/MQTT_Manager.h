@@ -1,10 +1,12 @@
 #ifndef MQTT_MANAGER_H
 #define MQTT_MANAGER_H
 
+// ============ GẮN CÁC THƯ VIỆN CẦN THIẾT ==============
+
 #include <Arduino.h>
 #include <PubSubClient.h>
 
-#define CONNECT_USING_WIFI false
+// ================= KHAI BÁO HÀM =================
 
 void setupMQTT(PubSubClient &mqttClient);
 void loopMQTT(PubSubClient &mqttClient);
