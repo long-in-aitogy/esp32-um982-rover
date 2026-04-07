@@ -3,6 +3,7 @@
 
 // ============= GẮN THƯ VIỆN CẦN THIẾT =============
 #include <WiFi.h>
+#include "../Prog_Config.h"
 
 // ================= CẤU HÌNH WI-FI =================
 const char* WIFI_SSID = "AITOGY";

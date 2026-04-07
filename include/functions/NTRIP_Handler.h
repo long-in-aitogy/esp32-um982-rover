@@ -4,6 +4,7 @@
 // ============ GẮN CÁC THƯ VIỆN CẦN THIẾT ==============
 
 #include <Arduino.h>
+#include "../Prog_Config.h"
 
 #if CONNECT_USING_WIFI
 #include <WiFiClient.h>

@@ -20,6 +20,7 @@
 // #define MODEM_RESET_PIN 4
 
 #include <TinyGsmClient.h>
+#include "../Prog_Config.h"
 
 const char apn[]      = "v-internet";  // Thay bằng APN của nhà mạng bạn
 const char gprsUser[] = "";
