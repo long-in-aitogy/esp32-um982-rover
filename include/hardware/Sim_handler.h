@@ -1,7 +1,9 @@
 #ifndef SIM_HANDLER_H
 #define SIM_HANDLER_H
 
+// xác định loại modem
 #define TINY_GSM_MODEM_SIM7600
+
 // Set serial for debug console
 #define SerialMon Serial
 

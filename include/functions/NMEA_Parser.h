@@ -2,7 +2,7 @@
 #define NMEA_PARSER_H
 
 #include <Arduino.h>
-#include "DataStructs.h"
+#include "../DataStructs.h"
 
 // Hàm chuyển đổi DDMM.MMMM sang Decimal
 double nmeaToDecimal(String nmeaPos, String dir);

@@ -1,10 +1,21 @@
-#include "NTRIP_Handler.h"
-#include "Config.h"
+#include "functions/NTRIP_Handler.h"
 
-WiFiClient ntripClient;
+// ================= HẰNG SỐ CẤU HÌNH ĐẦU VÀO NTRIP =================
+// 1 = PUSH BASE, 2 = PULL NO NMEA, 3 = PULL WITH NMEA
+const int NTRIP_MODE = 3;
+
+const char* NTRIP_CASTER_IP = "aitogy.com.vn"; // THAY BẰNG IP HOẶC DOMAIN CASTER CỦA BẠN
+const int NTRIP_CASTER_PORT = 2101;
+const char* NTRIP_MOUNTPOINT = "/humga";
+// Base64 của "trung:12345"
+const char* NTRIP_AUTH = "dHJ1bmc6MTIzNDU=";
+
+// ================= BIẾN TOÀN CỤC =================
 bool isIcyOk = false;
 unsigned long lastReconnect = 0;
 bool isNmeaSent = false; // Cờ kiểm tra xem đã gửi NMEA xác thực chưa
+
+// ================= ĐỊNH NGHĨA HÀM =================
 
 void setupNTRIP() {
   isIcyOk = false;
@@ -15,7 +26,7 @@ bool isNtripConnected() {
   return isIcyOk; // Trả về true nếu đã xác thực thành công với Caster
 }
 
-void connectNTRIP(WiFiClient &ntripClient) {
+void connectNTRIP(ClientType &ntripClient) {
   Serial.print("\n[NTRIP] Dang mo TCP den: ");
   Serial.println(NTRIP_CASTER_IP);
 
@@ -58,7 +69,7 @@ void connectNTRIP(WiFiClient &ntripClient) {
   }
 }
 
-void loopNTRIP(String currentGGA) {
+void loopNTRIP(ClientType &ntripClient, String currentGGA) {
   // 1. Quản lý mất kết nối
   if (!ntripClient.connected()) {
     isIcyOk = false;
