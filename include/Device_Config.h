@@ -4,8 +4,19 @@
 #ifndef DEVICE_CONFIG_H
 #define DEVICE_CONFIG_H
 
-#define CONNECT_USING_WIFI false
+#define CONNECT_USING_WIFI 1
+#define CONNECT_USING_LORA 0
+#define CONNECT_USING_4G 0
 
+#if (!CONNECT_USING_WIFI && !CONNECT_USING_4G && !CONNECT_USING_LORA)
+    #warning "Không chọn phương thức kết nối nào! Sẽ sử dụng WiFi."
+    #undef CONNECT_USING_WIFI
+    #define CONNECT_USING_WIFI 1
+#endif
+
+#if ((CONNECT_USING_WIFI + CONNECT_USING_4G + CONNECT_USING_LORA) > 1)
+    #error "Chỉ được chọn một phương thức kết nối! Vui lòng chỉnh sửa DEVICE_CONFIG.h"
+#endif
 
 // ================= CẤU HÌNH PHẦN CỨNG =================
 const int RX_GNSS = 26; // Nối TXD (Hàng dưới) của UM980

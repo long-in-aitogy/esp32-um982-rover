@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <PubSubClient.h>
 #include "../Prog_Config.h"
+#include "../Device_Config.h"
 
 // ================= KHAI BÁO HÀM =================
 

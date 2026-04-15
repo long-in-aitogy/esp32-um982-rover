@@ -9,7 +9,8 @@
 #include "hardware/Wifi_handler.h"
 WiFiClient espClient;
 WiFiClient ntripClient;
-#else
+#endif
+#if CONNECT_USING_4G
 #include "hardware/Sim_handler.h"
 #ifdef DUMP_AT_COMMANDS
 #include <StreamDebugger.h>
@@ -37,6 +38,10 @@ ksxt_data_struct ksxtData;
 unsigned long lastHealthCheck = 0;
 const unsigned long HEALTH_INTERVAL = 30000; // Gửi báo cáo sức khỏe mỗi 30 giây (30000 ms)
 
+// Thông tin tên và mật khẩu wifi
+const char* WIFI_SSID = "AITOGY";
+const char* WIFI_PASS = "aitogy@aitogy";
+
 void sendDeviceHealth() {
   // 1. Lấy các thông số hệ thống
   unsigned long uptime_s = millis() / 1000;
@@ -45,7 +50,8 @@ void sendDeviceHealth() {
   #if CONNECT_USING_WIFI
     int32_t rssi = WiFi.RSSI();
     String connected_via = "WiFi";
-  #else
+  #endif
+  #if CONNECT_USING_4G
     int32_t rssi = modem.getSignalQuality();
     String connected_via = "GSM";
   #endif
@@ -80,8 +86,9 @@ void setup() {
 
   #if CONNECT_USING_WIFI
     Serial.println("[SETUP] Su dung ket noi WIFI");
-    setupWiFi();
-  #else
+    setupWiFi((char*)WIFI_SSID, (char*)WIFI_PASS);
+  #endif
+  #if CONNECT_USING_4G
     Serial.println("[SETUP] Su dung ket noi SIM/GSM");
     setupGSM(modem);
   #endif
