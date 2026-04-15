@@ -5,12 +5,13 @@
 
 #include <Arduino.h>
 #include "../Prog_Config.h"
+#include "../Device_Config.h"
 
 #if CONNECT_USING_WIFI
 #include <WiFiClient.h>
-#include "wifi_handler.h"
 typedef WiFiClient ClientType;
-#else
+#endif
+#if CONNECT_USING_4G
 #include "../hardware/Sim_handler.h"
 #include <TinyGsmClient.h>
 typedef TinyGsmClient ClientType;

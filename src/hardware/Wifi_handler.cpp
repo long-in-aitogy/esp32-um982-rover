@@ -1,10 +1,10 @@
 #include "hardware/Wifi_handler.h"
 
-void setupWiFi() {
+void setupWiFi(char* wifi_ssid, char* wifi_pass) {
   Serial.print("\n[WIFI] Dang ket noi mang: ");
-  Serial.println(WIFI_SSID);
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
-  
+  Serial.println(wifi_ssid);
+  WiFi.begin(wifi_ssid, wifi_pass);
+
   int attempt = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
