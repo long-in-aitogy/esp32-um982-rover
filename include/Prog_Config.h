@@ -12,7 +12,7 @@ inline constexpr int GNSS_BAUD = 115200;
 // ================= CẤU HÌNH KẾT NỐI =================
 #if CONNECT_USING_WIFI
 inline constexpr char WIFI_SSID[] = "AITOGY";
-inline constexpr char WIFI_PASS[] = "aitogy@aitogy";
+inline constexpr char WIFI_PASSWORD[] = "aitogy@aitogy";
 #endif
 
 #if CONNECT_USING_4G
@@ -53,5 +53,8 @@ inline constexpr char TOPIC_SUB_CMD[] = "tdm2402/um980/cmd";
 inline constexpr char TOPIC_PUB_RAW_GGA[] = "tdm2402/um980/raw/gga";
 inline constexpr char TOPIC_PUB_RAW_KSXT[] = "tdm2402/um980/raw/ksxt";
 inline constexpr char TOPIC_PUB_HEALTH[] = "tdm2402/um980/health";
+
+// ================= CẤU HÌNH KIỂM TRA SỨC KHOẺ =================
+const unsigned long HEALTH_INTERVAL = 30000;
 
 #endif // PROG_CONFIG_H

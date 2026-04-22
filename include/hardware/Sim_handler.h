@@ -19,6 +19,14 @@
 #include <TinyGsmClient.h>
 #include "Top_Lvl_Config.h"
 
-void setupGSM(TinyGsm &modem);
+#ifdef DUMP_AT_COMMANDS
+#include <StreamDebugger.h>
+extern StreamDebugger debugger;
+extern TinyGsm        modem;
+#else
+extern TinyGsm        modem;
+#endif
+
+void setupGSM();
 
 #endif

@@ -3,12 +3,13 @@
 #if CONNECT_USING_WIFI
 #define WIFI_CODE
 
+#include "Prog_Config.h"
 #include "hardware/Wifi_handler.h"
 
-void setupWiFi(char* wifi_ssid, char* wifi_pass) {
+void setupWiFi() {
   Serial.print("\n[WIFI] Dang ket noi mang: ");
-  Serial.println(wifi_ssid);
-  WiFi.begin(wifi_ssid, wifi_pass);
+  Serial.println(WIFI_SSID);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   int attempt = 0;
   while (WiFi.status() != WL_CONNECTED) {

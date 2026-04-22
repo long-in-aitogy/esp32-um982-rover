@@ -6,7 +6,15 @@
 #include "Prog_Config.h"
 #include "hardware/Sim_handler.h"
 
-void setupGSM(TinyGsm &modem) {
+#ifdef DUMP_AT_COMMANDS
+#include <StreamDebugger.h>
+static StreamDebugger debugger(SerialAT, SerialMon);
+TinyGsm        modem(debugger);
+#else
+TinyGsm        modem(Serial);
+#endif
+
+void setupGSM() {
     int retrys = 1;
     SerialMon.println("Initializing modem... Attempt: " + String(retrys));
     modem.restart();

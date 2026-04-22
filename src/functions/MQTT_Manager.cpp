@@ -2,6 +2,19 @@
 #include "Top_Lvl_Config.h"
 #include "Prog_Config.h"
 
+// ================= ĐỊNH NGHĨA CÁC ĐỐI TƯỢNG CẦN CHO KẾT NỐI =================
+#if CONNECT_USING_WIFI
+#include "hardware/Wifi_handler.h"
+static WiFiClient espClient;
+#endif
+#if CONNECT_USING_4G
+#include "hardware/Sim_handler.h"
+extern TinyGsm modem;
+static TinyGsmClient espClient(modem);
+#endif
+
+PubSubClient mqtt(espClient);
+
 // ================= ĐỊNH NGHĨA HÀM =================
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -16,59 +29,59 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
   Serial1.print("\r\n");
 }
 
-void setupMQTT(PubSubClient &mqttClient) {
-  mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
-  mqttClient.setCallback(mqttCallback);
+void setupMQTT() {
+  mqtt.setServer(MQTT_SERVER, MQTT_PORT);
+  mqtt.setCallback(mqttCallback);
 }
 
-void loopMQTT(PubSubClient &mqttClient) {
-  if (!mqttClient.connected()) {
+void loopMQTT() {
+  if (!mqtt.connected()) {
     Serial.println("\n[MQTT] Dang ket noi Broker...");
     String clientId = "ESP32_GW_" + String(random(0xffff), HEX);
-    if (mqttClient.connect(clientId.c_str(), MQTT_USER, MQTT_PASS)) {
+    if (mqtt.connect(clientId.c_str(), MQTT_USER, MQTT_PASS)) {
       Serial.println("[MQTT] Da ket noi!");
-      mqttClient.subscribe(TOPIC_SUB_CMD);
+      mqtt.subscribe(TOPIC_SUB_CMD);
     } else {
       Serial.print("[MQTT] Loi rc=");
-      Serial.print(mqttClient.state());
+      Serial.print(mqtt.state());
       Serial.println(" -> Thu lai sau 5s");
       delay(5000);
     }
   }
-  mqttClient.loop();
+  mqtt.loop();
 }
 
-void publishData(PubSubClient &mqttClient, String payload, bool isGGA) {
-  if (mqttClient.connected() && payload.length() > 0) {
+void publishData(String payload, bool isGGA) {
+  if (mqtt.connected() && payload.length() > 0) {
     Serial.print("[MQTT UPLINK] ");
     Serial.println(payload);
     if (isGGA)
-      mqttClient.publish(TOPIC_PUB_DATA_GGA, payload.c_str());
+      mqtt.publish(TOPIC_PUB_DATA_GGA, payload.c_str());
     else
-      mqttClient.publish(TOPIC_PUB_DATA_KSXT, payload.c_str());
+      mqtt.publish(TOPIC_PUB_DATA_KSXT, payload.c_str());
   }
 }
 
-void publishRaw(PubSubClient &mqttClient, String payload, bool isGGA) {
-  if (mqttClient.connected() && payload.length() > 0) {
+void publishRaw(String payload, bool isGGA) {
+  if (mqtt.connected() && payload.length() > 0) {
     Serial.print("[UM982 GNSS RAW DATA] ");
     Serial.println(payload);
     if (isGGA) {
-      mqttClient.publish(TOPIC_PUB_RAW_GGA, payload.c_str());
+      mqtt.publish(TOPIC_PUB_RAW_GGA, payload.c_str());
     } else {
-      mqttClient.publish(TOPIC_PUB_RAW_KSXT, payload.c_str());
+      mqtt.publish(TOPIC_PUB_RAW_KSXT, payload.c_str());
     }
   }
 }
 
-void publishHealth(PubSubClient &mqttClient, String payload) {
-  if (mqttClient.connected() && payload.length() > 0) {
+void publishHealth(String payload) {
+  if (mqtt.connected() && payload.length() > 0) {
     Serial.print("[MQTT HEALTH] ");
     Serial.println(payload);
-    mqttClient.publish(TOPIC_PUB_HEALTH, payload.c_str());
+    mqtt.publish(TOPIC_PUB_HEALTH, payload.c_str());
   }
 }
 
-bool isMqttConnected(PubSubClient &mqttClient) {
-  return mqttClient.connected();
+bool isMqttConnected() {
+  return mqtt.connected();
 }

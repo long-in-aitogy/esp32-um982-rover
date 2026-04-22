@@ -1,5 +1,7 @@
 #include "helper.h"
 
+extern String latestGGA;
+
 void sendDeviceHealth() {
   // 1. Lấy các thông số hệ thống
   unsigned long uptime_s = millis() / 1000;
@@ -14,7 +16,7 @@ void sendDeviceHealth() {
     String connected_via = "GSM";
   #endif
   
-  bool mqttOk = isMqttConnected(mqtt);
+  bool mqttOk = isMqttConnected();
   bool ntripOk = isNtripConnected();
   bool gnssOk = (latestGGA.length() > 10); // Nếu có chuỗi NMEA hợp lệ
   
@@ -28,5 +30,5 @@ void sendDeviceHealth() {
            gnssOk ? "true" : "false");
            
   // 3. Gửi lên Topic theo dõi
-  publishHealth(mqtt, String(healthPayload));
+  publishHealth(String(healthPayload));
 }
