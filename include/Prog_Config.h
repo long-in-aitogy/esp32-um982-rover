@@ -42,7 +42,7 @@
 // ================ CẤU HÌNH MQTT =================
 
 #define MQTT_SERVER "aitogy.asia"
-#define MQTT_PORT 1883   // uint16_t
+#define MQTT_PORT 1883
 #define MQTT_USER "mqttUser"
 #define MQTT_PASS "MqttPassword123$%^"
 
