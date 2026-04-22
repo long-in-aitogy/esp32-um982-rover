@@ -27,6 +27,8 @@
 #define CONNECT_USING_4G 1
 #endif
 
+#define TCP_IP 0
+#define LORA_SERIAL 1
 #ifndef NTRIP_COMMUNICATION_PROTOCOL
 #define NTRIP_COMMUNICATION_PROTOCOL TCP_IP // Chọn giữa TCP_IP hoặc LORA_SERIAL
 #endif
@@ -41,7 +43,5 @@
 #if ((CONNECT_USING_WIFI + CONNECT_USING_4G) > 1)
     #error "Chỉ được chọn một phương thức kết nối! Vui lòng chỉnh sửa DEVICE_CONFIG.h"
 #endif
-
-
 
 #endif
