@@ -1,3 +1,8 @@
+#include "Top_Lvl_Config.h"
+
+#if CONNECT_USING_4G
+#define GSM_CODE
+
 #include "hardware/Sim_handler.h"
 
 void setupGSM(TinyGsm &modem) {
@@ -20,7 +25,7 @@ void setupGSM(TinyGsm &modem) {
     SerialMon.print("Modem Info: ");
     SerialMon.println(modemInfo);
 
-    SerialAT.begin(115200, SERIAL_8N1, MODEM_RX, MODEM_TX);
+    SerialAT.begin(115200, SERIAL_8N1, RX_TO_MODEM_TX, TX_TO_MODEM_RX);
     delay(3000);
     
     SerialMon.println("Connecting to GSM network...");
@@ -40,8 +45,8 @@ void setupGSM(TinyGsm &modem) {
     SerialMon.print("Signal quality: " + String(csq));
 
     SerialMon.print("Connecting to APN: ");
-    SerialMon.print(apn);
-    if (!modem.gprsConnect(apn, gprsUser, gprsPass)) {
+    SerialMon.print(APN);
+    if (!modem.gprsConnect(APN, GPRS_USER, GPRS_PASS)) {
             SerialMon.println(" - Fail !");
             delay(10000);
             return;
@@ -53,3 +58,5 @@ void setupGSM(TinyGsm &modem) {
     IPAddress local = modem.localIP();
     SerialMon.println("Local IP: " + local.toString());
 }
+
+#endif // GSM_CODE

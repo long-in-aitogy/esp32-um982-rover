@@ -1,3 +1,8 @@
+#include "Top_Lvl_Config.h"
+
+#if CONNECT_USING_WIFI
+#define WIFI_CODE
+
 #include "hardware/Wifi_handler.h"
 
 void setupWiFi(char* wifi_ssid, char* wifi_pass) {
@@ -16,3 +21,5 @@ void setupWiFi(char* wifi_ssid, char* wifi_pass) {
   }
   Serial.println("\n[WIFI] Ket noi THANH CONG! IP: " + WiFi.localIP().toString());
 }
+
+#endif // WIFI_CODE

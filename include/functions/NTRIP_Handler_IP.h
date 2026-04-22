@@ -1,16 +1,17 @@
-#ifndef NTRIP_HANDLER_H
-#define NTRIP_HANDLER_H
+#ifndef NTRIP_HANDLER_IP_H
+#define NTRIP_HANDLER_IP_H
 
 // ============ GẮN CÁC THƯ VIỆN CẦN THIẾT ==============
 
 #include <Arduino.h>
-#include "../Prog_Config.h"
-#include "../Device_Config.h"
+#include "Top_Lvl_Config.h"
+#include "Prog_Config.h"
 
 #if CONNECT_USING_WIFI
 #include <WiFiClient.h>
 typedef WiFiClient ClientType;
 #endif
+
 #if CONNECT_USING_4G
 #include "../hardware/Sim_handler.h"
 #include <TinyGsmClient.h>

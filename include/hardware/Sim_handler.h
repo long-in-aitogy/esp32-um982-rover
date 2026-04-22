@@ -14,17 +14,11 @@
 // #define DUMP_AT_COMMANDS
 #define TINY_GSM_DEBUG SerialMon
 
-// pins
-#define MODEM_RX 17
-#define MODEM_TX 16
 // #define MODEM_RESET_PIN 4
 
 #include <TinyGsmClient.h>
-#include "../Prog_Config.h"
-
-const char apn[]      = "v-internet";  // Thay bằng APN của nhà mạng bạn
-const char gprsUser[] = "";
-const char gprsPass[] = "";
+#include "Top_Lvl_Config.h"
+#include "Prog_Config.h"
 
 void setupGSM(TinyGsm &modem);
 

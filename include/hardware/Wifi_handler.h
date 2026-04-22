@@ -3,7 +3,8 @@
 
 // ============= GẮN THƯ VIỆN CẦN THIẾT =============
 #include <WiFi.h>
-#include "../Prog_Config.h"
+#include "Top_Lvl_Config.h"
+#include "Prog_Config.h"
 
 // ================= HÀM CẤU HÌNH WI-FI =================
 
