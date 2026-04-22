@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include "../DataStructs.h"
 #include "Top_Lvl_Config.h"
-#include "Prog_Config.h"
 
 // Hàm chuyển đổi DDMM.MMMM sang Decimal
 double nmeaToDecimal(String nmeaPos, String dir);

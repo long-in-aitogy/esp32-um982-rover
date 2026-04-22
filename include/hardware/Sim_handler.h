@@ -18,7 +18,6 @@
 
 #include <TinyGsmClient.h>
 #include "Top_Lvl_Config.h"
-#include "Prog_Config.h"
 
 void setupGSM(TinyGsm &modem);
 
