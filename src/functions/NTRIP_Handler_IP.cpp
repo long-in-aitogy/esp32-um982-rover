@@ -1,14 +1,7 @@
-#include "functions/NTRIP_Handler.h"
+#if NTRIP_COMMUNICATION_PROTOCOL == TCP_IP
+#define NTRIP_HANDLER_IP_CODE
 
-// ================= HẰNG SỐ CẤU HÌNH ĐẦU VÀO NTRIP =================
-// 1 = PUSH BASE, 2 = PULL NO NMEA, 3 = PULL WITH NMEA
-const int NTRIP_MODE = 3;
-
-const char* NTRIP_CASTER_IP = "aitogy.com.vn"; // THAY BẰNG IP HOẶC DOMAIN CASTER CỦA BẠN
-const int NTRIP_CASTER_PORT = 2101;
-const char* NTRIP_MOUNTPOINT = "/humga";
-// Base64 của "trung:12345"
-const char* NTRIP_AUTH = "dHJ1bmc6MTIzNDU=";
+#include "functions/NTRIP_Handler_IP.h"
 
 // ================= BIẾN TOÀN CỤC =================
 bool isIcyOk = false;
@@ -34,17 +27,16 @@ void connectNTRIP(ClientType &ntripClient) {
     Serial.println("[NTRIP] Da ket noi TCP! Dang gui Header...");
     
     String request = "";
-    if (NTRIP_MODE == 1) { // PUSH BASE
+    #if NTRIP_MODE == 1
       request = "SOURCE " + String(NTRIP_AUTH) + " " + String(NTRIP_MOUNTPOINT) + "\r\n";
       request += "Source-Agent: NTRIP NtripServerCMD/1.0\r\n\r\n";
-    } else { // PULL CLIENT
+    #else
       request = "GET " + String(NTRIP_MOUNTPOINT) + " HTTP/1.0\r\n";
       request += "User-Agent: NTRIP AitogyNTRIPClient/20131124\r\n";
       request += "Authorization: Basic " + String(NTRIP_AUTH) + "\r\n";
       request += "Accept: */*\r\n";
       request += "Connection: close\r\n\r\n";
-    }
-
+    #endif
     ntripClient.print(request);
     
     // Đợi server trả lời ICY OK
@@ -88,7 +80,7 @@ void loopNTRIP(ClientType &ntripClient, String currentGGA) {
     static unsigned long lastGgaSentTime = 0;
     
     // Nếu Mode 3 yêu cầu NMEA: Gửi đều đặn mỗi 10 giây
-    if (NTRIP_MODE == 3) {
+    #if NTRIP_MODE == 3
       if (currentGGA.length() > 10 && (millis() - lastGgaSentTime > 10000)) {
         Serial.print("[NTRIP UPLINK] Cap nhat vi tri cho Server: ");
         Serial.println(currentGGA);
@@ -96,8 +88,8 @@ void loopNTRIP(ClientType &ntripClient, String currentGGA) {
         ntripClient.print(currentGGA + "\r\n");
         lastGgaSentTime = millis();
       }
-    }
-
+    #endif
+    
     // 3. Nhận dữ liệu RTCM từ Caster -> Đẩy thẳng xuống UM980
     if (ntripClient.available()) {
       uint8_t buffer[128];
@@ -111,3 +103,4 @@ void loopNTRIP(ClientType &ntripClient, String currentGGA) {
     }
   }
 }
+#endif // NTRIP_HANDLER_IP_CODE
