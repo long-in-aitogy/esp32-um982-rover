@@ -5,7 +5,6 @@
 
 #include <Arduino.h>
 #include "Top_Lvl_Config.h"
-#include "Prog_Config.h"
 
 #if CONNECT_USING_WIFI
 #include <WiFiClient.h>

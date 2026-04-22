@@ -5,7 +5,6 @@
 
 #include <Arduino.h>
 #include <PubSubClient.h>
-#include "Top_Lvl_Config.h"
 
 // ================= KHAI BÁO HÀM =================
 

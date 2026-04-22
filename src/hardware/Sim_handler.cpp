@@ -3,6 +3,7 @@
 #if CONNECT_USING_4G
 #define GSM_CODE
 
+#include "Prog_Config.h"
 #include "hardware/Sim_handler.h"
 
 void setupGSM(TinyGsm &modem) {
