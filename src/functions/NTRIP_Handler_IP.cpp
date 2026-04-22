@@ -5,9 +5,20 @@
 #include "Prog_Config.h"
 
 // ================= BIẾN TOÀN CỤC =================
-bool isIcyOk = false;
-unsigned long lastReconnect = 0;
-bool isNmeaSent = false; // Cờ kiểm tra xem đã gửi NMEA xác thực chưa
+static bool isIcyOk = false;
+static unsigned long lastReconnect = 0;
+static bool isNmeaSent = false; // Cờ kiểm tra xem đã gửi NMEA xác thực chưa
+
+// ================= CÁC ĐỐI TƯỢNG KẾT NỐI =================
+#if CONNECT_USING_WIFI
+#include "hardware/Wifi_handler.h"
+WiFiClient ntripClient;
+#endif
+#if CONNECT_USING_4G
+#include "hardware/Sim_handler.h"
+extern TinyGsm modem;
+TinyGsmClient ntripClient(modem);
+#endif
 
 // ================= ĐỊNH NGHĨA HÀM =================
 
@@ -20,7 +31,7 @@ bool isNtripConnected() {
   return isIcyOk; // Trả về true nếu đã xác thực thành công với Caster
 }
 
-void connectNTRIP(ClientType &ntripClient) {
+void connectNTRIP() {
   Serial.print("\n[NTRIP] Dang mo TCP den: ");
   Serial.println(NTRIP_CASTER_IP);
 
@@ -62,12 +73,12 @@ void connectNTRIP(ClientType &ntripClient) {
   }
 }
 
-void loopNTRIP(ClientType &ntripClient, String currentGGA) {
+void loopNTRIP(String currentGGA) {
   // 1. Quản lý mất kết nối
   if (!ntripClient.connected()) {
     isIcyOk = false;
     if (millis() - lastReconnect > 7000) { // Thử lại sau 7 giây
-      connectNTRIP(ntripClient);
+      connectNTRIP();
       lastReconnect = millis();
     }
     return;
